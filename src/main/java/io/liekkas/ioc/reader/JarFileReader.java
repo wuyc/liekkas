@@ -1,19 +1,17 @@
 package io.liekkas.ioc.reader;
 
+import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.entity.ClassEntity;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-@Slf4j
 @AllArgsConstructor
 public class JarFileReader implements ClassReader {
 
@@ -29,9 +27,8 @@ public class JarFileReader implements ClassReader {
             jarFile = ((JarURLConnection) resource.openConnection()).getJarFile();
             return findClassesByJar(packagePath, jarFile);
         } catch (Exception e) {
-            log.error("Scan jar file error.", e);
+            throw new LiekkasException("Jar file scan failed.", e);
         }
-        return Collections.emptySet();
     }
 
     private Set<ClassEntity> findClassesByJar(String packagePath, JarFile jarFile) throws ClassNotFoundException {

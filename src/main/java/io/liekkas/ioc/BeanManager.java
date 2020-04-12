@@ -1,5 +1,6 @@
 package io.liekkas.ioc;
 
+import io.liekkas.exception.BeanException;
 import io.liekkas.ioc.annotation.Bean;
 import io.liekkas.ioc.annotation.Inject;
 import io.liekkas.ioc.entity.ClassEntity;
@@ -8,13 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Slf4j
 public class BeanManager {
+
+    private BeanManager() {}
 
     public static void initBean(String packageName) {
         LiekkasIoc ioc = LiekkasIoc.getInstance();
@@ -46,20 +47,21 @@ public class BeanManager {
                     method.setAccessible(true);
                     Class<?> clazz = method.getDeclaringClass();
                     Class<?>[] methodParams = method.getParameterTypes();
-                    List<Object> paramInstances = new ArrayList<>();
-                    for (Class<?> param : methodParams) {
-                        Object bean = ioc.getBean(param);
+                    int paramLen = methodParams.length;
+                    Object[] args = new Object[paramLen];
+                    for (int i = 0; i < paramLen; i++) {
+                        Object bean = ioc.getBean(methodParams[i]);
                         if (null == bean) {
-                            log.error("Inject bean [{}] error.", method.getReturnType().getName());
+                            log.error("Inject bean [{}] failed.", method.getReturnType().getName());
                             return;
                         }
-                        paramInstances.add(bean);
+                        args[i] = bean;
                     }
                     try {
-                        Object ret = method.invoke(ioc.getBean(clazz), paramInstances.toArray());
+                        Object ret = method.invoke(ioc.getBean(clazz), args);
                         ioc.registerBean(ret);
                     } catch (ReflectiveOperationException e) {
-                        log.error("register bean error.", e);
+                        throw new BeanException("Register bean failed.", e);
                     }
                 });
         // inject bean from pool.
@@ -83,7 +85,7 @@ public class BeanManager {
                     try {
                         field.set(ioc.getBean(clazz), ioc.getBean(type));
                     } catch (IllegalAccessException e) {
-                        log.error("Inject bean error.", e);
+                        throw new BeanException("Inject bean failed.", e);
                     }
                 });
     }

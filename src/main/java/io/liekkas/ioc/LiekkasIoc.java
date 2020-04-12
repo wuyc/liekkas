@@ -1,5 +1,6 @@
 package io.liekkas.ioc;
 
+import io.liekkas.exception.BeanException;
 import io.liekkas.ioc.entity.BeanEntity;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,9 +54,8 @@ public class LiekkasIoc implements Ioc {
         try {
             return beanClass.cast(bean);
         } catch (ClassCastException e) {
-            log.error("Get bean error.", e);
+            throw new BeanException("Get bean failed.", e);
         }
-        return null;
     }
 
     @Override

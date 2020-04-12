@@ -1,17 +1,16 @@
 package io.liekkas.ioc.reader;
 
+import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.entity.ClassEntity;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Set;
 
-@Slf4j
-@AllArgsConstructor
 public class ClassScanner {
+
+    private ClassScanner() {}
 
     public static Set<ClassEntity> getClasses(String packageName) {
         ClassReader classReader = getClassReader(packageName);
@@ -35,7 +34,7 @@ public class ClassScanner {
                 return url.indexOf(".jar!") != -1 || url.indexOf(".zip!") != -1;
             }
         } catch (IOException e) {
-            log.error("", e);
+            throw new LiekkasException("Class load failed", e);
         }
         return false;
     }
