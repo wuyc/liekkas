@@ -19,7 +19,7 @@ public class BeanManager {
     public static void initBean(String packageName) {
         LiekkasIoc ioc = LiekkasIoc.getInstance();
         Supplier<Stream<ClassEntity>> classes = () -> ClassScanner.getClasses(packageName).stream();
-        // inject class bean.
+        // register bean from the classes with @Bean annotation.
         classes
                 .get()
                 .filter(classEntity -> {
@@ -29,7 +29,7 @@ public class BeanManager {
                 })
                 .map(classEntity -> classEntity.getClazz())
                 .forEach(clazz -> ioc.registerBean(clazz));
-        // inject method return bean.
+        // register bean from the classes method with @Bean annotation.
         classes
                 .get()
                 .flatMap(classEntity -> {
@@ -59,7 +59,7 @@ public class BeanManager {
                         Object ret = method.invoke(ioc.getBean(clazz), paramInstances.toArray());
                         ioc.registerBean(ret);
                     } catch (ReflectiveOperationException e) {
-                        log.error("Inject bean error.", e);
+                        log.error("register bean error.", e);
                     }
                 });
         // inject bean from pool.
