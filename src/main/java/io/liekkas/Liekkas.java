@@ -3,10 +3,13 @@ package io.liekkas;
 import io.liekkas.web.handler.RouteHandler;
 import io.liekkas.web.http.HttpMethod;
 import io.liekkas.web.route.RouteHolder;
+import lombok.Getter;
 
 public class Liekkas {
 
     private static Liekkas liekkas;
+    @Getter
+    private Class<?> application;
 
     private Liekkas() {}
 
@@ -19,6 +22,10 @@ public class Liekkas {
             }
         }
         return liekkas;
+    }
+
+    public void start(Class<?> application) {
+        this.application = application;
     }
 
     public Liekkas get(String path, RouteHandler routeHandler) {

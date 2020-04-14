@@ -6,43 +6,49 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class RouteHolder {
 
     @Getter
-    private static List<Route> routes = new ArrayList<>();
+    private static Map<String, Route> routeMapping = new HashMap<>();
 
     private RouteHolder() {}
 
-    public static void addRoute(List<Route> list) {
-        routes.addAll(list);
+    public static void addRoute(List<Route> routes) {
+        for (Route route : routes) {
+            addRoute(route);
+        }
     }
 
     public static void addRoute(Route route) {
-        routes.add(route);
+        String key = genRouteKey(route.getPath(), route.getHttpMethod());
+        routeMapping.putIfAbsent(key, route);
     }
 
     public static void addRoute(HttpMethod httpMethod, String path, Method action, Object controller){
         Route route = new Route();
         route.setHttpMethod(httpMethod);
-        route.setPath(path);
+        route.setPath(PathUtil.fixPath(path));
         route.setAction(action);
         route.setController(controller);
-        routes.add(route);
+        addRoute(route);
     }
 
-    public static Route findRoute(String path) {
-        String fixedPath = PathUtil.fixPath(path);
-        for (Route route : routes) {
-            boolean matched = fixedPath.equals(route.getPath());
-            if (matched) {
-                return route;
-            }
-        }
-        return null;
+    public static Route findRoute(String path, HttpMethod httpMethod) {
+        String key = genRouteKey(path, httpMethod);
+        return routeMapping.get(key);
+    }
+
+    public static Route findRoute(String path, String httpMethod) {
+        return findRoute(path, HttpMethod.valueOf(httpMethod));
+    }
+
+    private static String genRouteKey(String path, HttpMethod httpMethod) {
+        return PathUtil.fixPath(path) + "#" + httpMethod.toString();
     }
 
 }

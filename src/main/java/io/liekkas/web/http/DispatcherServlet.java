@@ -1,7 +1,6 @@
 package io.liekkas.web.http;
 
 import io.liekkas.Liekkas;
-import io.liekkas.exception.BeanException;
 import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.BeanManager;
 import io.liekkas.util.PathUtil;
@@ -25,42 +24,37 @@ public class DispatcherServlet extends HttpServlet {
         Liekkas liekkas = Liekkas.newInstance();
         String className = getInitParameter("bootstrap");
         Bootstrap bootstrap = newBootstrap(className);
-        BeanManager.initBean(Bootstrap.class.getPackage().getName());
         bootstrap.init(liekkas);
+        BeanManager.init(liekkas.getApplication().getPackage().getName());
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = PathUtil.getRelativePath(req);
-        Route route = RouteHolder.findRoute(uri);
+        Route route = RouteHolder.findRoute(uri, req.getMethod());
+        RouteContext.init(req, resp);
         if (null == route) {
             resp.setStatus(404);
             resp.getWriter().write("404 NOT FOUND");
         } else {
-            handle(route, req, resp);
+            handle(route);
         }
+        RouteContext.remove();
     }
 
-    private void handle(Route route, HttpServletRequest req, HttpServletResponse resp) {
+    private void handle(Route route) {
         Object controller = route.getController();
-        Method method = route.getAction();
+        Method action = route.getAction();
 
-        RouteContext context = new RouteContext(req, resp);
+        action.setAccessible(true);
+        Class<?>[] methodParams = action.getParameterTypes();
 
-        method.setAccessible(true);
-        Class<?>[] methodParams = method.getParameterTypes();
-        int paramLen = methodParams.length;
-        Object[] args = new Object[paramLen];
-        for (int i = 0; i < paramLen; i++) {
-            boolean isContext = methodParams[i].getName().equals(RouteContext.class.getName());
-            if (isContext) {
-                args[i] = context;
-            }
-        }
+        ActionArgumentResolver resolver = new ActionArgumentResolver();
+        Object[] args = resolver.resolveArgument(methodParams);
         try {
-            method.invoke(controller, args);
+            action.invoke(controller, args);
         } catch (ReflectiveOperationException e) {
-            throw new BeanException("Inject controller method params failed.", e);
+            throw new LiekkasException("Invoke action failed.", e);
         }
     }
 

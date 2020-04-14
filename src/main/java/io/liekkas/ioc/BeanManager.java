@@ -17,7 +17,7 @@ public class BeanManager {
 
     private BeanManager() {}
 
-    public static void initBean(String packageName) {
+    public static void init(String packageName) {
         LiekkasIoc ioc = LiekkasIoc.getInstance();
         Supplier<Stream<ClassEntity>> classes = () -> ClassScanner.getClasses(packageName).stream();
         // register bean from the classes with @Bean annotation.
@@ -47,16 +47,8 @@ public class BeanManager {
                     method.setAccessible(true);
                     Class<?> clazz = method.getDeclaringClass();
                     Class<?>[] methodParams = method.getParameterTypes();
-                    int paramLen = methodParams.length;
-                    Object[] args = new Object[paramLen];
-                    for (int i = 0; i < paramLen; i++) {
-                        Object bean = ioc.getBean(methodParams[i]);
-                        if (null == bean) {
-                            log.error("Inject bean [{}] failed.", method.getReturnType().getName());
-                            return;
-                        }
-                        args[i] = bean;
-                    }
+                    BeanMethodArgumentResolver resolver = new BeanMethodArgumentResolver();
+                    Object[] args = resolver.resolveArgument(methodParams);
                     try {
                         Object ret = method.invoke(ioc.getBean(clazz), args);
                         ioc.registerBean(ret);
