@@ -1,6 +1,6 @@
 package io.liekkas.ioc.bean;
 
-import io.liekkas.exception.BeanException;
+import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.ioc.annotation.Bean;
 import io.liekkas.ioc.annotation.Inject;
@@ -54,7 +54,7 @@ public class BeanManager {
                         Object ret = method.invoke(ioc.getBean(clazz), args);
                         ioc.registerBean(ret);
                     } catch (ReflectiveOperationException e) {
-                        throw new BeanException("Register bean failed.", e);
+                        throw new LiekkasException("Register bean failed.", e);
                     }
                 });
         // inject bean from pool.
@@ -78,7 +78,7 @@ public class BeanManager {
                     try {
                         field.set(ioc.getBean(clazz), ioc.getBean(type));
                     } catch (IllegalAccessException e) {
-                        throw new BeanException("Inject bean failed.", e);
+                        throw new LiekkasException("Inject bean failed.", e);
                     }
                 });
     }
