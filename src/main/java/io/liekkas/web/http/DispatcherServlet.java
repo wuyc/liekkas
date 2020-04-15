@@ -2,7 +2,8 @@ package io.liekkas.web.http;
 
 import io.liekkas.Liekkas;
 import io.liekkas.exception.LiekkasException;
-import io.liekkas.ioc.BeanManager;
+import io.liekkas.ioc.bean.BeanManager;
+import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.util.PathUtil;
 import io.liekkas.web.Bootstrap;
 import io.liekkas.web.route.Route;
@@ -21,11 +22,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        Liekkas liekkas = Liekkas.newInstance();
+        BeanManager.init(getInitParameter("base-package"));
         String className = getInitParameter("bootstrap");
-        Bootstrap bootstrap = newBootstrap(className);
-        bootstrap.init(liekkas);
-        BeanManager.init(liekkas.getApplication().getPackage().getName());
+        LiekkasIoc ioc = LiekkasIoc.getInstance();
+        ioc.registerBean(className);
+        Bootstrap bootstrap = (Bootstrap) ioc.getBean(className);
+        bootstrap.init(Liekkas.newInstance());
     }
 
     @Override
@@ -56,18 +58,6 @@ public class DispatcherServlet extends HttpServlet {
         } catch (ReflectiveOperationException e) {
             throw new LiekkasException("Invoke action failed.", e);
         }
-    }
-
-    private Bootstrap newBootstrap(String className) {
-        if (null != className) {
-            try {
-                Class<?> clazz = Class.forName(className);
-                return (Bootstrap) clazz.newInstance();
-            } catch (Exception e) {
-                throw new LiekkasException("Failed to instantiate bootstrap class.", e);
-            }
-        }
-        throw new LiekkasException("Please setup bootstrap class name.");
     }
 
 }

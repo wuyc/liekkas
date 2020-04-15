@@ -1,6 +1,7 @@
-package io.liekkas.ioc;
+package io.liekkas.ioc.bean;
 
 import io.liekkas.exception.BeanException;
+import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.ioc.annotation.Bean;
 import io.liekkas.ioc.annotation.Inject;
 import io.liekkas.ioc.entity.ClassEntity;

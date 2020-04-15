@@ -1,6 +1,6 @@
 package io.liekkas.ioc.reader;
 
-import io.liekkas.exception.LiekkasException;
+import io.liekkas.exception.BeanException;
 import io.liekkas.ioc.entity.ClassEntity;
 import lombok.AllArgsConstructor;
 
@@ -27,7 +27,7 @@ public class JarFileReader implements ClassReader {
             jarFile = ((JarURLConnection) resource.openConnection()).getJarFile();
             return findClassesByJar(packagePath, jarFile);
         } catch (Exception e) {
-            throw new LiekkasException("Jar file scan failed.", e);
+            throw new BeanException("Jar file scan failed.", e);
         }
     }
 

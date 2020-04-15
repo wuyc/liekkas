@@ -1,6 +1,6 @@
 package io.liekkas.ioc.reader;
 
-import io.liekkas.exception.LiekkasException;
+import io.liekkas.exception.BeanException;
 import io.liekkas.ioc.entity.ClassEntity;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ClassScanner {
                 return url.indexOf(".jar!") != -1 || url.indexOf(".zip!") != -1;
             }
         } catch (IOException e) {
-            throw new LiekkasException("Class load failed", e);
+            throw new BeanException("Class load failed", e);
         }
         return false;
     }

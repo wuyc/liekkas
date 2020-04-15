@@ -1,6 +1,6 @@
 package io.liekkas.ioc.reader;
 
-import io.liekkas.exception.LiekkasException;
+import io.liekkas.exception.BeanException;
 import io.liekkas.ioc.entity.ClassEntity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class PackageReader implements ClassReader {
                 findClassesByPackage(packageName, filePath, classes);
             }
         } catch (Exception e) {
-            throw new LiekkasException("Package scan failed.", e);
+            throw new BeanException("Package scan failed.", e);
         }
         return classes;
     }

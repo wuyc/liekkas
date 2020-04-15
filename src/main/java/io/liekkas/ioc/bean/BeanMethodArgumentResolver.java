@@ -1,5 +1,6 @@
-package io.liekkas.ioc;
+package io.liekkas.ioc.bean;
 
+import io.liekkas.ioc.LiekkasIoc;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
