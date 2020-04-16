@@ -24,15 +24,13 @@ public class DispatcherServlet extends HttpServlet {
     public void init() throws ServletException {
         // start ioc
         BeanManager.init(getInitParameter("base-package"));
-        String className = getInitParameter("bootstrap");
-        LiekkasIoc ioc = LiekkasIoc.getInstance();
-        Bootstrap bootstrap = (Bootstrap) ioc.getBean(className);
-        if (null == bootstrap) {
-            ioc.registerBean(className);
-            bootstrap = (Bootstrap) ioc.getBean(className);
-        }
+        Bootstrap bootstrap = newBootstrap(getInitParameter("bootstrap"));
         // init application
         bootstrap.init(Liekkas.getInstance());
+        /**
+         * scan @Controller annotation
+         * register routes from @RequestMapping
+         */
     }
 
     @Override
@@ -43,9 +41,19 @@ public class DispatcherServlet extends HttpServlet {
         if (null == route) {
             render404(resp);
         } else {
-            handle(route);
+            handleReq(route);
         }
         RouteContext.remove();
+    }
+
+    private Bootstrap newBootstrap(String className) {
+        LiekkasIoc ioc = LiekkasIoc.getInstance();
+        Bootstrap bootstrap = (Bootstrap) ioc.getBean(className);
+        if (null == bootstrap) {
+            ioc.registerBean(className);
+            bootstrap = (Bootstrap) ioc.getBean(className);
+        }
+        return bootstrap;
     }
 
     private void render404(HttpServletResponse resp) throws IOException {
@@ -53,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
         resp.getWriter().write("404 NOT FOUND");
     }
 
-    private void handle(Route route) {
+    private void handleReq(Route route) {
         Object controller = route.getController();
         Method action = route.getAction();
 
