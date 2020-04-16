@@ -22,11 +22,16 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        // start ioc
         BeanManager.init(getInitParameter("base-package"));
         String className = getInitParameter("bootstrap");
         LiekkasIoc ioc = LiekkasIoc.getInstance();
-        ioc.registerBean(className);
         Bootstrap bootstrap = (Bootstrap) ioc.getBean(className);
+        if (null == bootstrap) {
+            ioc.registerBean(className);
+            bootstrap = (Bootstrap) ioc.getBean(className);
+        }
+        // init application
         bootstrap.init(Liekkas.newInstance());
     }
 

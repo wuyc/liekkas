@@ -1,5 +1,6 @@
 package io.liekkas.web.http;
 
+import io.liekkas.exception.LiekkasException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,9 @@ public class ActionArgumentResolver {
 
     public ActionArgumentResolver() {
         RouteContext context = RouteContext.get();
+        if (null == context) {
+            throw new LiekkasException("Context is not existent.");
+        }
         argMapping.put(RouteContext.class.getName(), context);
         argMapping.put(HttpServletRequest.class.getName(), context.getRequest());
         argMapping.put(HttpServletResponse.class.getName(), context.getResponse());
