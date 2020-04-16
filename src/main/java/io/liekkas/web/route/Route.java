@@ -6,11 +6,16 @@ import lombok.Data;
 import java.lang.reflect.Method;
 
 @Data
-public class Route {
+public class Route implements Cloneable {
 
     private HttpMethod httpMethod;
     private String path;
     private Method action;
     private Object controller;
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
 }

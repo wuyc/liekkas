@@ -3,6 +3,7 @@ package io.liekkas.web.route;
 import io.liekkas.util.PathUtil;
 import io.liekkas.web.http.HttpMethod;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -29,13 +30,22 @@ public class RouteHolder {
         routeMapping.putIfAbsent(key, route);
     }
 
+    @SneakyThrows
     public static void addRoute(HttpMethod httpMethod, String path, Method action, Object controller){
         Route route = new Route();
         route.setHttpMethod(httpMethod);
         route.setPath(PathUtil.fixPath(path));
         route.setAction(action);
         route.setController(controller);
-        addRoute(route);
+        if (!httpMethod.equals(HttpMethod.ALL)) {
+            addRoute(route);
+        } else {
+            for (HttpMethod method : HttpMethod.values()) {
+                Route clone = (Route) route.clone();
+                clone.setHttpMethod(method);
+                addRoute(clone);
+            }
+        }
     }
 
     public static Route findRoute(String path, HttpMethod httpMethod) {

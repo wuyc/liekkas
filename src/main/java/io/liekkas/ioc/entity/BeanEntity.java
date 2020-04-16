@@ -2,6 +2,7 @@ package io.liekkas.ioc.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 @Data
 @AllArgsConstructor
@@ -15,13 +16,10 @@ public class BeanEntity {
         this.type = bean.getClass();
     }
 
+    @SneakyThrows
     public BeanEntity(Class<?> type) {
-        try {
-            this.type = type;
-            this.bean = type.newInstance();
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
+        this.type = type;
+        this.bean = type.newInstance();
     }
 
 }

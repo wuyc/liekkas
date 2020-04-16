@@ -1,5 +1,7 @@
 package io.liekkas.util;
 
+import lombok.SneakyThrows;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,6 +25,7 @@ public class PathUtil {
         return path;
     }
 
+    @SneakyThrows
     public static String getRelativePath(HttpServletRequest request) {
         String path = request.getRequestURI();
         String contextPath = request.getContextPath();
@@ -35,11 +38,7 @@ public class PathUtil {
         if (!path.startsWith(SLASH)) {
             path = SLASH + path;
         }
-        try {
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-        }
-        return path;
+        return URLDecoder.decode(path, "UTF-8");
     }
 
 }
