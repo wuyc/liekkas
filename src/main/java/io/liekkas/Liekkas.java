@@ -10,7 +10,7 @@ public class Liekkas {
 
     private Liekkas() {}
 
-    public static Liekkas newInstance() {
+    public static Liekkas getInstance() {
         if (null == liekkas) {
             synchronized (Liekkas.class) {
                 if (null == liekkas) {

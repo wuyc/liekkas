@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
             bootstrap = (Bootstrap) ioc.getBean(className);
         }
         // init application
-        bootstrap.init(Liekkas.newInstance());
+        bootstrap.init(Liekkas.getInstance());
     }
 
     @Override
@@ -41,12 +41,16 @@ public class DispatcherServlet extends HttpServlet {
         Route route = RouteHolder.findRoute(uri, req.getMethod());
         RouteContext.init(req, resp);
         if (null == route) {
-            resp.setStatus(404);
-            resp.getWriter().write("404 NOT FOUND");
+            render404(resp);
         } else {
             handle(route);
         }
         RouteContext.remove();
+    }
+
+    private void render404(HttpServletResponse resp) throws IOException {
+        resp.setStatus(404);
+        resp.getWriter().write("404 NOT FOUND");
     }
 
     private void handle(Route route) {
