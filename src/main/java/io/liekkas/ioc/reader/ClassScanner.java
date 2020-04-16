@@ -10,11 +10,20 @@ import java.util.Set;
 
 public class ClassScanner {
 
+    private static Set<ClassEntity> classes;
+
     private ClassScanner() {}
 
     public static Set<ClassEntity> getClasses(String packageName) {
-        ClassReader classReader = getClassReader(packageName);
-        return classReader.readClasses();
+        if (null == classes) {
+            synchronized (ClassScanner.class) {
+                if (null == classes) {
+                    ClassReader classReader = getClassReader(packageName);
+                    classes = classReader.readClasses();
+                }
+            }
+        }
+        return classes;
     }
 
     private static ClassReader getClassReader(String packageName) {
