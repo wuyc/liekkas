@@ -1,4 +1,4 @@
-package io.liekkas.ioc.reader;
+package io.liekkas.ioc.bean;
 
 import io.liekkas.ioc.annotation.Bean;
 import io.liekkas.ioc.annotation.Inject;

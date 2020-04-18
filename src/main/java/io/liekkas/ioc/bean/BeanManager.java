@@ -2,7 +2,6 @@ package io.liekkas.ioc.bean;
 
 import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.LiekkasIoc;
-import io.liekkas.ioc.reader.ClassScanner;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
