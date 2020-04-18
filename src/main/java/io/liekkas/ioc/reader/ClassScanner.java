@@ -1,51 +1,63 @@
 package io.liekkas.ioc.reader;
 
-import io.liekkas.exception.LiekkasException;
-import io.liekkas.ioc.entity.ClassEntity;
+import io.liekkas.ioc.annotation.Bean;
+import io.liekkas.ioc.annotation.Inject;
+import org.reflections.ReflectionUtils;
+import org.reflections.Reflections;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class ClassScanner {
 
-    private static Set<ClassEntity> classes;
+    private Reflections reflections;
 
-    private ClassScanner() {}
-
-    public static Set<ClassEntity> getClasses(String packageName) {
-        if (null == classes) {
-            synchronized (ClassScanner.class) {
-                if (null == classes) {
-                    ClassReader classReader = getClassReader(packageName);
-                    classes = classReader.readClasses();
-                }
-            }
-        }
-        return classes;
+    private ClassScanner() {
     }
 
-    private static ClassReader getClassReader(String packageName) {
-        if (isJarPackage(packageName)) {
-            return new JarFileReader(packageName);
-        }
-        return new PackageReader(packageName);
+    public ClassScanner(String packageName) {
+        reflections = new Reflections(packageName);
     }
 
-    private static boolean isJarPackage(String packageName) {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String packagePath = packageName.replace(".", "/");
-            Enumeration<URL> dirs = classLoader.getResources(packagePath);
-            if (dirs.hasMoreElements()) {
-                String url = dirs.nextElement().toString();
-                return url.indexOf(".jar!") != -1 || url.indexOf(".zip!") != -1;
-            }
-        } catch (IOException e) {
-            throw new LiekkasException("Class load failed.", e);
-        }
-        return false;
+    public Stream<Class<?>> findBeanClasses() {
+        return reflections
+                .getTypesAnnotatedWith(Bean.class)
+                .stream()
+                .filter(clazz -> !clazz.isAnnotation());
+    }
+
+    public Stream<Method> findBeanMethods() {
+        return reflections
+                .getTypesAnnotatedWith(Bean.class)
+                .stream()
+                .filter(clazz -> !clazz.isAnnotation())
+                .flatMap(clazz -> {
+                    Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(Bean.class));
+                    return Stream.of(methods.toArray());
+                })
+                .map(obj -> {
+                    Method method = (Method) obj;
+                    method.setAccessible(true);
+                    return method;
+                });
+    }
+
+    public Stream<Field> findInjectFields() {
+        return reflections
+                .getTypesAnnotatedWith(Bean.class)
+                .stream()
+                .filter(clazz -> !clazz.isAnnotation())
+                .flatMap(clazz -> {
+                    Set<Field> fields = ReflectionUtils.getAllFields(clazz, ReflectionUtils.withAnnotation(Inject.class));
+                    return Stream.of(fields.toArray());
+                })
+                .map(obj -> {
+                    Field field = (Field) obj;
+                    field.setAccessible(true);
+                    return field;
+                });
     }
 
 }

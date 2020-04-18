@@ -6,19 +6,14 @@ import io.liekkas.web.route.RouteHolder;
 
 public class Liekkas {
 
-    private static Liekkas liekkas;
-
     private Liekkas() {}
 
+    private static final class SingletonHolder {
+        private static final Liekkas liekkas = new Liekkas();
+    }
+
     public static Liekkas getInstance() {
-        if (null == liekkas) {
-            synchronized (Liekkas.class) {
-                if (null == liekkas) {
-                    liekkas = new Liekkas();
-                }
-            }
-        }
-        return liekkas;
+        return SingletonHolder.liekkas;
     }
 
     public Liekkas get(String path, RouteHandler routeHandler) {

@@ -10,23 +10,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class LiekkasIoc implements Ioc {
 
-    private static LiekkasIoc liekkasIoc;
     private final Map<String, BeanEntity> beanPool = new ConcurrentHashMap<>(32);
 
+    private static final class SingletonHolder {
+        private static final LiekkasIoc liekkasIoc = new LiekkasIoc();
+    }
+
     public static LiekkasIoc getInstance() {
-        if (null == liekkasIoc) {
-            synchronized (LiekkasIoc.class) {
-                if (null == liekkasIoc) {
-                    liekkasIoc = new LiekkasIoc();
-                }
-            }
-        }
-        return liekkasIoc;
+        return SingletonHolder.liekkasIoc;
     }
 
     @Override
     public void registerBean(Object bean) {
-        registerBean(bean.getClass());
+        BeanEntity beanEntity = new BeanEntity(bean);
+        Class<?> type = beanEntity.getType();
+        put(type.getName(), beanEntity);
+        Class<?>[] interfaces = type.getInterfaces();
+        for (Class<?> interfaceClazz : interfaces) {
+            put(interfaceClazz.getName(), beanEntity);
+        }
     }
 
     @Override
