@@ -1,7 +1,9 @@
 package io.liekkas;
 
+import io.liekkas.util.PathUtil;
 import io.liekkas.web.handler.RouteHandler;
 import io.liekkas.web.http.HttpMethod;
+import io.liekkas.web.route.RouteEntity;
 import io.liekkas.web.route.RouteHolder;
 
 public class Liekkas {
@@ -17,44 +19,100 @@ public class Liekkas {
     }
 
     public Liekkas get(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.GET, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.GET)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas post(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.POST, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.POST)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas put(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.PUT, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.PUT)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas patch(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.PATCH, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.PATCH)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas delete(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.DELETE, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.DELETE)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas options(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.OPTIONS, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.OPTIONS)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 
     public Liekkas match(Iterable<HttpMethod> httpMethods, String path, RouteHandler routeHandler) {
         for (HttpMethod httpMethod : httpMethods) {
-            RouteHolder.addRoute(httpMethod, path, RouteHandler.METHOD, routeHandler);
+            RouteEntity routeEntity = RouteEntity
+                    .builder()
+                    .httpMethod(httpMethod)
+                    .path(PathUtil.fixPath(path))
+                    .action(RouteHandler.METHOD)
+                    .controller(routeHandler)
+                    .build();
+            RouteHolder.addRoute(routeEntity);
         }
         return this;
     }
 
     public Liekkas any(String path, RouteHandler routeHandler) {
-        RouteHolder.addRoute(HttpMethod.ALL, path, RouteHandler.METHOD, routeHandler);
+        RouteEntity routeEntity = RouteEntity
+                .builder()
+                .httpMethod(HttpMethod.ALL)
+                .path(PathUtil.fixPath(path))
+                .action(RouteHandler.METHOD)
+                .controller(routeHandler)
+                .build();
+        RouteHolder.addRoute(routeEntity);
         return this;
     }
 

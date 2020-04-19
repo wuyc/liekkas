@@ -1,5 +1,6 @@
 package io.liekkas.ioc.bean;
 
+import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BeanMethodArgumentResolver {
 
     public Object[] resolveArgument(Class<?>[] methodArgs) {
-        LiekkasIoc ioc = LiekkasIoc.getInstance();
+        Ioc ioc = LiekkasIoc.getInstance();
         int argsLen = methodArgs.length;
         Object[] args = new Object[argsLen];
         for (int i = 0; i < argsLen; i++) {

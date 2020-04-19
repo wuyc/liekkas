@@ -1,7 +1,9 @@
 package io.liekkas.ioc.bean;
 
 import io.liekkas.exception.LiekkasException;
+import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
+import io.liekkas.util.ClassScanner;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -10,15 +12,15 @@ public class BeanManager {
     private BeanManager() {}
 
     public static void init(String packageName) {
-        LiekkasIoc ioc = LiekkasIoc.getInstance();
+        Ioc ioc = LiekkasIoc.getInstance();
         ClassScanner scanner = new ClassScanner(packageName);
 
         // register bean from the classes with @Bean annotation.
-        scanner.findBeanClasses()
+        scanner.scanBeanClasses()
                 .forEach(clazz -> ioc.registerBean(clazz));
 
         // register bean from the classes method with @Bean annotation.
-        scanner.findBeanMethods()
+        scanner.scanBeanMethods()
                 .forEach(method -> {
                     Class<?> clazz = method.getDeclaringClass();
                     Class<?>[] methodArgs = method.getParameterTypes();
@@ -33,7 +35,7 @@ public class BeanManager {
                 });
 
         // inject bean from pool.
-        scanner.findInjectFields()
+        scanner.scanInjectFields()
                 .forEach(field -> {
                     Class<?> clazz = field.getDeclaringClass();
                     Class<?> type = field.getType();

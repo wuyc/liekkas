@@ -2,12 +2,14 @@ package io.liekkas.web.http;
 
 import io.liekkas.Liekkas;
 import io.liekkas.exception.LiekkasException;
-import io.liekkas.ioc.bean.BeanManager;
+import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
+import io.liekkas.ioc.bean.BeanManager;
 import io.liekkas.util.PathUtil;
 import io.liekkas.web.Bootstrap;
-import io.liekkas.web.route.Route;
+import io.liekkas.web.route.RouteEntity;
 import io.liekkas.web.route.RouteHolder;
+import io.liekkas.web.route.RouteManager;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
@@ -22,32 +24,31 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // start ioc
-        BeanManager.init(getInitParameter("base-package"));
+        String basePackage = getInitParameter("base-package");
+        // init ioc
+        BeanManager.init(basePackage);
         Bootstrap bootstrap = newBootstrap(getInitParameter("bootstrap"));
         // init application
         bootstrap.init(Liekkas.getInstance());
-        /**
-         * scan @Controller annotation
-         * register routes from @RequestMapping
-         */
+        // init route
+        RouteManager.init(basePackage);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = PathUtil.getRelativePath(req);
-        Route route = RouteHolder.findRoute(uri, req.getMethod());
+        RouteEntity routeEntity = RouteHolder.findRoute(uri, req.getMethod());
         RouteContext.init(req, resp);
-        if (null == route) {
+        if (null == routeEntity) {
             render404(resp);
         } else {
-            handleReq(route);
+            handleReq(routeEntity);
         }
         RouteContext.remove();
     }
 
     private Bootstrap newBootstrap(String className) {
-        LiekkasIoc ioc = LiekkasIoc.getInstance();
+        Ioc ioc = LiekkasIoc.getInstance();
         Bootstrap bootstrap = (Bootstrap) ioc.getBean(className);
         if (null == bootstrap) {
             ioc.registerBean(className);
@@ -61,9 +62,9 @@ public class DispatcherServlet extends HttpServlet {
         resp.getWriter().write("404 NOT FOUND");
     }
 
-    private void handleReq(Route route) {
-        Object controller = route.getController();
-        Method action = route.getAction();
+    private void handleReq(RouteEntity routeEntity) {
+        Object controller = routeEntity.getController();
+        Method action = routeEntity.getAction();
 
         action.setAccessible(true);
         Class<?>[] methodParams = action.getParameterTypes();
