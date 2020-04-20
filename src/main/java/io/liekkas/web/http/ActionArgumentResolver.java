@@ -22,6 +22,7 @@ public class ActionArgumentResolver {
         argMapping.put(HttpServletRequest.class.getName(), context.getRawRequest());
         argMapping.put(HttpServletResponse.class.getName(), context.getRawResponse());
         argMapping.put(Request.class.getName(), context.getRequest());
+        argMapping.put(Response.class.getName(), context.getResponse());
     }
 
     public Object[] resolveArgument(Class<?>[] actionArgs) {

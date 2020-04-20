@@ -13,6 +13,8 @@ public class RouteContext {
     private HttpServletResponse rawResponse;
     @Getter
     private Request request;
+    @Getter
+    private Response response;
 
     private RouteContext() {}
 
@@ -23,6 +25,7 @@ public class RouteContext {
         context.rawRequest = req;
         context.rawResponse = resp;
         context.request = new HttpRequest(req);
+        context.response = new HttpResponse(resp);
         CONTEXT.set(context);
     }
 
