@@ -97,7 +97,7 @@ public class RouteManager {
     private static void registerRoute(RouteStruct.RouteStructBuilder clazzRoute,
                                       RouteStruct.RouteStructBuilder actionRoute,
                                       Method action, Object controller) {
-        List<HttpMethod> httpMethods = intersectionHttpMethod(clazzRoute.httpMethods, actionRoute.httpMethods);
+        List<HttpMethod> httpMethods = retainHttpMethod(clazzRoute.httpMethods, actionRoute.httpMethods);
         for (HttpMethod httpMethod : httpMethods) {
             RouteEntity routeEntity = RouteEntity
                     .builder()
@@ -110,7 +110,7 @@ public class RouteManager {
         }
     }
 
-    private static List<HttpMethod> intersectionHttpMethod(HttpMethod[] clazzHttpMethods, HttpMethod[] actionHttpMethods) {
+    private static List<HttpMethod> retainHttpMethod(HttpMethod[] clazzHttpMethods, HttpMethod[] actionHttpMethods) {
         List<HttpMethod> clazzHttpMethodList = Arrays.asList(clazzHttpMethods);
         List<HttpMethod> actionHttpMethodList = Arrays.asList(actionHttpMethods);
         if (clazzHttpMethodList.contains(HttpMethod.ALL)) {
