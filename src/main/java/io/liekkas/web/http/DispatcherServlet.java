@@ -6,7 +6,7 @@ import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.ioc.bean.BeanManager;
 import io.liekkas.util.PathUtil;
-import io.liekkas.web.Bootstrap;
+import io.liekkas.Bootstrap;
 import io.liekkas.web.route.RouteEntity;
 import io.liekkas.web.route.RouteHolder;
 import io.liekkas.web.route.RouteManager;

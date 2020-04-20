@@ -1,4 +1,4 @@
-package io.liekkas.web;
+package io.liekkas;
 
 import io.liekkas.Liekkas;
 
