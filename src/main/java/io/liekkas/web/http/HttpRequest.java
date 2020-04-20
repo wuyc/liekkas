@@ -44,6 +44,12 @@ public class HttpRequest implements Request {
         return gson.fromJson(json, modelClazz);
     }
 
+    /**
+     ******************************************************
+     * (TODO) These methods operate the REST API Route.   *
+     ******************************************************
+     */
+
     @Override
     public Integer pathInt(String name) {
         return null;
