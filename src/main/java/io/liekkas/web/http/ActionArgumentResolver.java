@@ -19,8 +19,9 @@ public class ActionArgumentResolver {
             throw new LiekkasException("Context is not existent.");
         }
         argMapping.put(RouteContext.class.getName(), context);
-        argMapping.put(HttpServletRequest.class.getName(), context.getRequest());
-        argMapping.put(HttpServletResponse.class.getName(), context.getResponse());
+        argMapping.put(HttpServletRequest.class.getName(), context.getRawRequest());
+        argMapping.put(HttpServletResponse.class.getName(), context.getRawResponse());
+        argMapping.put(Request.class.getName(), context.getRequest());
     }
 
     public Object[] resolveArgument(Class<?>[] actionArgs) {

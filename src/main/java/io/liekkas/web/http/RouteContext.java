@@ -8,18 +8,21 @@ import javax.servlet.http.HttpServletResponse;
 public class RouteContext {
 
     @Getter
-    private HttpServletRequest request;
+    private HttpServletRequest rawRequest;
     @Getter
-    private HttpServletResponse response;
+    private HttpServletResponse rawResponse;
+    @Getter
+    private Request request;
 
     private RouteContext() {}
 
-    private static final ThreadLocal<RouteContext> CONTEXT = new ThreadLocal<RouteContext>();
+    private static final ThreadLocal<RouteContext> CONTEXT = new ThreadLocal<>();
 
     public static void init(HttpServletRequest req, HttpServletResponse resp) {
         RouteContext context = new RouteContext();
-        context.request = req;
-        context.response = resp;
+        context.rawRequest = req;
+        context.rawResponse = resp;
+        context.request = new HttpRequest(req);
         CONTEXT.set(context);
     }
 
