@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +26,11 @@ public class ActionArgumentResolver {
         argMapping.put(Response.class.getName(), context.getResponse());
     }
 
-    public Object[] resolveArgument(Class<?>[] actionArgs) {
-        int argsLen = actionArgs.length;
-        Object[] args = new Object[argsLen];
-        for (int i = 0; i < argsLen; i++) {
-            args[i] = queryArg(actionArgs[i]);
+    public Object[] resolveArgument(Parameter[] actionParams) {
+        int paramsLen = actionParams.length;
+        Object[] args = new Object[paramsLen];
+        for (int i = 0; i < paramsLen; i++) {
+            args[i] = queryArg(actionParams[i].getType());
         }
         return args;
     }

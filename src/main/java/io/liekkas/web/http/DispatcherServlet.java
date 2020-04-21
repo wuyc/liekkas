@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 @Slf4j
 public class DispatcherServlet extends HttpServlet {
@@ -67,10 +68,10 @@ public class DispatcherServlet extends HttpServlet {
         Method action = routeEntity.getAction();
 
         action.setAccessible(true);
-        Class<?>[] methodParams = action.getParameterTypes();
+        Parameter[] actionParams = action.getParameters();
 
         ActionArgumentResolver resolver = new ActionArgumentResolver();
-        Object[] args = resolver.resolveArgument(methodParams);
+        Object[] args = resolver.resolveArgument(actionParams);
         try {
             action.invoke(controller, args);
         } catch (ReflectiveOperationException e) {

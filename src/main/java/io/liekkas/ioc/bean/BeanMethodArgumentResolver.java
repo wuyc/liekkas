@@ -4,17 +4,19 @@ import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Parameter;
+
 @Slf4j
 public class BeanMethodArgumentResolver {
 
-    public Object[] resolveArgument(Class<?>[] methodArgs) {
+    public Object[] resolveArgument(Parameter[] methodParams) {
         Ioc ioc = LiekkasIoc.getInstance();
-        int argsLen = methodArgs.length;
-        Object[] args = new Object[argsLen];
-        for (int i = 0; i < argsLen; i++) {
-            Object bean = ioc.getBean(methodArgs[i]);
+        int paramsLen = methodParams.length;
+        Object[] args = new Object[paramsLen];
+        for (int i = 0; i < paramsLen; i++) {
+            Object bean = ioc.getBean(methodParams[i].getType());
             if (null == bean) {
-                log.error("Inject bean [{}] failed.", methodArgs[i].getName());
+                log.error("Inject bean [{}] failed.", methodParams[i].getName());
             }
             args[i] = bean;
         }

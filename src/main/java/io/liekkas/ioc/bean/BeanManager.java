@@ -6,6 +6,8 @@ import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.util.ClassScanner;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Parameter;
+
 @Slf4j
 public class BeanManager {
 
@@ -23,9 +25,9 @@ public class BeanManager {
         scanner.scanBeanMethods()
                 .forEach(method -> {
                     Class<?> clazz = method.getDeclaringClass();
-                    Class<?>[] methodArgs = method.getParameterTypes();
+                    Parameter[] methodParams = method.getParameters();
                     BeanMethodArgumentResolver resolver = new BeanMethodArgumentResolver();
-                    Object[] args = resolver.resolveArgument(methodArgs);
+                    Object[] args = resolver.resolveArgument(methodParams);
                     try {
                         Object ret = method.invoke(ioc.getBean(clazz), args);
                         ioc.registerBean(ret);
