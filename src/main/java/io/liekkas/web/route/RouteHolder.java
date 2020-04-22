@@ -1,22 +1,24 @@
 package io.liekkas.web.route;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import io.liekkas.util.PathUtil;
 import io.liekkas.web.http.HttpMethod;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class RouteHolder {
 
     @Getter
-    private static Map<String, RouteEntity> routeMapping = new HashMap<>();
+    private static Table<String, HttpMethod, RouteEntity> routeMapping = HashBasedTable.create();
 
-    private RouteHolder() {}
+    private RouteHolder() {
+    }
 
     public static void addRoute(List<RouteEntity> routeEntities) {
         for (RouteEntity routeEntity : routeEntities) {
@@ -26,31 +28,27 @@ public class RouteHolder {
 
     @SneakyThrows
     public static void addRoute(RouteEntity routeEntity) {
-        if (!routeEntity.getHttpMethod().equals(HttpMethod.ALL)) {
-            String key = genRouteKey(routeEntity.getPath(), routeEntity.getHttpMethod());
-            routeMapping.putIfAbsent(key, routeEntity);
+        String path = routeEntity.getPath();
+        HttpMethod httpMethod = routeEntity.getHttpMethod();
+        if (!httpMethod.equals(HttpMethod.ALL)) {
+            routeMapping.put(path, httpMethod, routeEntity);
         } else {
             for (HttpMethod method : HttpMethod.values()) {
-                RouteEntity clone = (RouteEntity) routeEntity.clone();
-                clone.setHttpMethod(method);
-                String key = genRouteKey(routeEntity.getPath(), method);
-                routeMapping.putIfAbsent(key, routeEntity);
+                routeMapping.put(path, method, routeEntity);
             }
         }
-
     }
 
     public static RouteEntity findRoute(String path, HttpMethod httpMethod) {
-        String key = genRouteKey(path, httpMethod);
-        return routeMapping.get(key);
+        return routeMapping.get(path, httpMethod);
     }
 
     public static RouteEntity findRoute(String path, String httpMethod) {
         return findRoute(path, HttpMethod.valueOf(httpMethod));
     }
 
-    private static String genRouteKey(String path, HttpMethod httpMethod) {
-        return PathUtil.fixPath(path) + "#" + httpMethod.toString();
+    public static RouteEntity findRoute(HttpServletRequest rawReq) {
+        return findRoute(PathUtil.getRelativePath(rawReq), rawReq.getMethod());
     }
 
 }

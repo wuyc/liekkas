@@ -8,16 +8,11 @@ import java.lang.reflect.Method;
 
 @Data
 @Builder
-public class RouteEntity implements Cloneable {
+public class RouteEntity {
 
     private HttpMethod httpMethod;
     private String path;
     private Method action;
     private Object controller;
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 
 }

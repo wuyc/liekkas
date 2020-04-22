@@ -50,24 +50,24 @@ public class HttpRequest implements Request {
      ******************************************************
      */
 
-    @Override
-    public Integer pathInt(String name) {
-        return null;
-    }
-
-    @Override
-    public Long pathLong(String name) {
-        return null;
-    }
-
-    @Override
-    public String pathString(String name) {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> pathParams() {
-        return null;
-    }
+//    @Override
+//    public Integer pathInt(String name) {
+//        return null;
+//    }
+//
+//    @Override
+//    public Long pathLong(String name) {
+//        return null;
+//    }
+//
+//    @Override
+//    public String pathString(String name) {
+//        return null;
+//    }
+//
+//    @Override
+//    public Map<String, String> pathParams() {
+//        return null;
+//    }
 
 }

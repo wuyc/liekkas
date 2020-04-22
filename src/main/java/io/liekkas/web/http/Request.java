@@ -16,13 +16,13 @@ public interface Request {
 
     <T>T bindWithForm(Class<T> modelClass);
 
-    Integer	pathInt(String name);
-
-    Long pathLong(String name);
-
-    String pathString(String name);
-
-    Map<String, String>	pathParams();
+//    Integer	pathInt(String name);
+//
+//    Long pathLong(String name);
+//
+//    String pathString(String name);
+//
+//    Map<String, String>	pathParams();
 
     default Object attribute(String name) {
         return raw().getAttribute(name);

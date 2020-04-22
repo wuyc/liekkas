@@ -9,7 +9,8 @@ public class PathUtil {
 
     private static final String SLASH = "/";
 
-    private PathUtil() {}
+    private PathUtil() {
+    }
 
     public static String fixPath(String path) {
         if (path == null) {

@@ -5,7 +5,6 @@ import io.liekkas.exception.LiekkasException;
 import io.liekkas.ioc.Ioc;
 import io.liekkas.ioc.LiekkasIoc;
 import io.liekkas.ioc.bean.BeanManager;
-import io.liekkas.util.PathUtil;
 import io.liekkas.Bootstrap;
 import io.liekkas.web.route.RouteEntity;
 import io.liekkas.web.route.RouteHolder;
@@ -37,9 +36,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String uri = PathUtil.getRelativePath(req);
-        RouteEntity routeEntity = RouteHolder.findRoute(uri, req.getMethod());
         RouteContext.init(req, resp);
+        RouteEntity routeEntity = RouteHolder.findRoute(req);
         if (null == routeEntity) {
             render404(resp);
         } else {
